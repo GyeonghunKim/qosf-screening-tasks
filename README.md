@@ -5,6 +5,8 @@ I solved task 1 as the screening task of the [qosf mentoring program](https://qo
 
 ## 1. Final Results
 
+![Fidelities](/images/fidelities.png)
+
 
 ## 2. Trials
 
