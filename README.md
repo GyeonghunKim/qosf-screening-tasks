@@ -97,3 +97,41 @@ def N_qubit_swap_test(state1, state2, CSWAPs = {}):
 
 ### 2-3. SWAP test with reduced state vector
 Lastly, I changed the structure of the state vector to reduce the space complexity. Generally, (2n+1) qubits are required for the n qubit SWAP test. However, since the problem restricted the target state as the product state, the state does not need to have the structure of C^x(2n+1). By considering the qubits' entanglement relations, I observed that only a small subspace of it, C^2 x [+n (C^2 x C^2)], is required. The size of the state vector was then reduced significantly from 2^(2n+1) to 8n. 
+
+```python
+def apply_CSWAP_product_state(state, target_index):
+    N = len(state)      # number of basis
+    n = N//8 # number of qubits
+    state = state.reshape((2, n, 2, 2))
+    state[1, target_index] = state[1, target_index].transpose()
+    state = state.reshape((N))
+    return state
+
+def N_qubit_SWAP_test_product_state(state1, state2):
+    zero_state = np.array([1, 0])[:, np.newaxis]
+    H = np.array([[1, 1], [1, -1]]) / np.sqrt(2)
+    N = len(state1)
+    n = N # int(np.log2(N)) # number of qubits
+
+    zero_state = np.matmul(H, zero_state).flatten()
+    state = []
+
+    for qubit1, qubit2 in zip(state1, state2):
+        state.append(np.kron(qubit1, qubit2))
+
+    state = np.array(state).flatten()
+    state = np.kron(zero_state, state)
+    for i in range(n):
+        state = apply_CSWAP_product_state(state, i)
+    processed_state = deepcopy(state)
+    length = len(processed_state)
+    processed_state[:length//2] = (state[:length//2] + state[length//2:])/np.sqrt(2)
+    processed_state[length//2:] = (state[:length//2] - state[length//2:])/np.sqrt(2)
+    transposed_state = processed_state.T.conj()
+    processed_state[length//2:] *= -1
+    
+    return_value = 1 - np.matmul(transposed_state, processed_state).real
+    return return_value # 0 for two identical states and 1 for orthogonal states
+
+
+```
