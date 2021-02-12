@@ -1,1 +1,3 @@
 # qosf-screening-tasks
+
+I solved a task 1 as the screening task of the [qosf mentoring program][https://qosf.org/qc_mentorship/]. In this project, I tried to prove my computational/numerical skills, visualization skills, and knowledge on quantum computing. I implemented the SWAP test of multi-qubit system in product state with numpy ndarray and scipy.optimize.minimize function, then visualize the optimization results with static diagram on parameter space of each qubit and animation on Bloch sphere with matplotlib and Qiskit. 
