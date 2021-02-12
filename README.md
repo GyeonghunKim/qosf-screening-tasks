@@ -99,7 +99,7 @@ def N_qubit_swap_test(state1, state2, CSWAPs = {}):
 ```
 
 ### 2-3. SWAP test with reduced state vector
-Lastly, I changed the structure of the state vector to reduce the space complexity. Generally, (2n+1) qubits are required for the n qubit SWAP test. However, since the problem restricted the target state as the product state, the state does not need to have the structure of C^x(2n+1). By considering the qubits' entanglement relations, I observed that only a small subspace of it, C^2 x [+n (C^2 x C^2)], is required. The size of the state vector was then reduced significantly from $$ 2^{(2n+1)} $$ to 8n. 
+Lastly, I changed the structure of the state vector to reduce the space complexity. Generally, (2n+1) qubits are required for the n qubit SWAP test. However, since the problem restricted the target state as the product state, the state does not need to have the structure of C^x(2n+1). By considering the qubits' entanglement relations, I observed that only a small subspace of it, C^2 x [+n (C^2 x C^2)], is required. The size of the state vector was then reduced significantly from $ 2^{(2n+1)} $ to $ 8n $. 
 
 ```python
 def apply_CSWAP_product_state(state, target_index):
