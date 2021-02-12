@@ -35,25 +35,23 @@ from mpl_toolkits.mplot3d import Axes3D
 from qiskit.visualization import plot_bloch_vector
 from qiskit.visualization.bloch import Bloch
 
-class SwapTestProductState:
-    def __init__(self, )
+class PSRWSTSolver:
+    def __init__(self):
+        pass
     
-    def Rx(theta):
-    return np.array([[np.cos(theta/2), -1j * np.sin(theta/2)], [-1j * np.sin(theta/2), np.cos(theta/2)]])
+    ## Single qubit operation methods
+    def Rx(self, theta):
+        return np.array([[np.cos(theta/2), -1j * np.sin(theta/2)], [-1j * np.sin(theta/2), np.cos(theta/2)]])
 
-    def Rz(phi):
+    def Rz(self, phi):
         return np.array([[np.exp(-0.5j * phi), 0], [0, np.exp(0.5j * phi)]])
 
-    def circuit_embeding(parameters, initial_state = np.array([1, 0])[:, np.newaxis]): # parameters[0] = theta, parameters[1] = phi
+    def circuit_embeding(self, parameters, initial_state = np.array([1, 0])[:, np.newaxis]): # parameters[0] = theta, parameters[1] = phi
         state = initial_state
-        state = np.matmul(Rz(parameters[1]), np.matmul(Rx(parameters[0]), state))
+        state = np.matmul(self.Rz(parameters[1]), np.matmul(self.Rx(parameters[0]), state))
         return state
-
-    def qstate_to_bloch_vector(state):
-        dm = np.matmul(state, state.conj().T)
-        bloch_vector = np.array([2 * dm[0, 1].real, 2 * dm[1, 0].imag, dm[0, 0] - dm[1, 1]]).real
-        return bloch_vector
     
+    ## Multi qubit operation methods
     def N_qubit_embeding(parameters, initial_states = None): # parameters[:, 0] = theta, parameters[:, 1] = phi
         if not initial_states:
             initial_states = np.array([1, 0])[:, np.newaxis][np.newaxis, :].repeat(len(parameters), axis = 0)
@@ -71,6 +69,7 @@ class SwapTestProductState:
         state = state.reshape((N))
         return state
     
+    ## SWAP test
     def SWAP_test(state1, state2):
         zero_state = np.array([1, 0])[:, np.newaxis]
         H = np.array([[1, 1], [1, -1]]) / np.sqrt(2)
@@ -97,6 +96,7 @@ class SwapTestProductState:
         return_value = 1 - np.matmul(transposed_state, processed_state).real
         return return_value # 0 for two identical states and 1 for orthogonal states
 
+    ## Loss function for the optimize.minimize
     def N_qubit_loss_val(parameter, random_state, optimization_traj = []):
         if parameter.ndim == 1:
             parameter = parameter.reshape((len(parameter)//2, 2))
@@ -104,7 +104,47 @@ class SwapTestProductState:
         current_state = N_qubit_embeding(parameter)
         return N_qubit_swap_test(current_state, random_state)
 
-    def show_N_qubit_optimization_trajectory_on_bloch_sphere(optimization_traj, figsize = (5, 5), view = (-60, 30)):
+    ## Visualization methods
+        
+    def qstate_to_bloch_vector(self, state):
+        dm = np.matmul(state, state.conj().T)
+        bloch_vector = np.array([2 * dm[0, 1].real, 2 * dm[1, 0].imag, dm[0, 0] - dm[1, 1]]).real
+        return bloch_vector
+    
+    def create_parameter_trajectory(self, t_list, *args):
+        return np.array([f(t_list) for f in args]).T
+
+    def sweep_on_bloch_sphere(self):
+        def f_theta(t_list):
+            return 2 * np.pi * t_list
+
+        def f_phi(t_list):
+            return 40 * np.pi * t_list
+
+        def update_bloch_sphere(idx, traj):
+            ax.clear()
+            B = Bloch(axes=ax)
+            B.add_vectors(traj[idx])
+            if idx > 0:
+                B.add_points(traj[:idx].T)
+            B.render(title=None)
+
+        traj = self.create_parameter_trajectory(np.linspace(0, 1, 400), *[f_theta, f_phi])
+        traj_on_Bloch_sphere = np.array([self.qstate_to_bloch_vector(self.circuit_embeding(point)) for point in traj])
+        
+        fig = plt.figure(figsize=(5, 5))
+        ax = fig.add_subplot(1, 1, 1, projection='3d')
+        ax.set_axis_off()
+        ax.set_xlim3d(-0.7, 0.7)
+        ax.set_ylim3d(-0.7, 0.7)
+        ax.set_zlim3d(-0.7, 0.7)
+        fig.set_size_inches(5, 5)
+        
+        ani = matplotlib.animation.FuncAnimation(fig, update_bloch_sphere, frames = np.arange(400), interval=30, blit=False, repeat = True, fargs = (traj_on_Bloch_sphere,))
+            
+        return ani
+
+    def show_N_qubit_optimization_trajectory_on_bloch_sphere(self, optimization_traj, figsize = (5, 5), view = (-60, 30)):
         axs = []
         n_qubits = len(optimization_traj[0])
 
@@ -113,7 +153,6 @@ class SwapTestProductState:
             figure_array_shape = (n_qubits//4 + 1, 4)
 
         figsize = (figsize[0] * figure_array_shape[1], figsize[1] * figure_array_shape[0])
-
 
         def update(idx, trajectories):
             for qubit_idx, trajectory in enumerate(trajectories):
@@ -146,3 +185,5 @@ class SwapTestProductState:
                                                  interval=50, blit=False, repeat = False, 
                                                  fargs = (trajectories_on_Bloch_sphere,))
         return ani
+
+    
