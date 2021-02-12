@@ -5,10 +5,15 @@ I solved task 1 as the screening task of the [qosf mentoring program](https://qo
 
 ## 1. Final Results
 Final results are provided in the PSRWST.py and tesk1.ipynb. Especially, see tesk1.ipynb contains the answers of the questions in task1. Below I listed the figures and animations in the jupyter notebook.
+
 1. 
+
 2. 
+
 3. 
+
 4. 
+
 
 
 ## 2. Trials
