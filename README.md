@@ -3,16 +3,24 @@
 ## Introduction
 I solved task 1 as the screening task of the [qosf mentoring program](https://qosf.org/qc_mentorship/ "qosf mentorship link"). I tried to prove my computational/numerical skills, visualization skills, and quantum computing knowledge in this project. I implemented the SWAP test of the multi-qubit system in product state with [numpy](https://numpy.org/ "numpy official page link") and [scipy.optimize.minimize](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html "scipy documentation link about optimize.minimize") function, then visualized the optimization results with static diagrams on parameter space of each qubit and animation on Bloch sphere with [matplotlib](https://matplotlib.org/ "matplotlib official page link")and [qiskit.visualization](https://qiskit.org/documentation/apidoc/visualization.html "qiskit official documentation link about qiskit.visualization library"). While implementing the SWAP test, for making codes with smaller time and space complexity, I changed the computation strategy several times. I described my [final results](#Final Results) and [trials](#Trials) separately not to make any confusion. 
 
+## Dependencies
+-Numpy
+-Scipy
+-Matplotlib
+-Qiskit
+-ffmpeg
+-ipython
+
 ## 1. Final Results
 Final results are provided in the PSRWST.py and tesk1.ipynb. Especially, see tesk1.ipynb contains the answers of the questions in task1. Below I listed the figures and animations in the jupyter notebook.
 
-1. 
+1. Animation of rotating arrow on the Bloch sphere to show my random quantum state generator works find. (Problem 1)
 
-2. 
+2. Animation of a quantum state on Bloch sphere approach to a random initial quantum state. (Problem 2)
 
-3. 
+3. Animation of each quantum state of product state on Bloch spheres approach to the random initial quantum state. (Problem 3)
 
-4. 
+4. Fidelity between the reproduced qubits and initial random qubits while the number of qubit is increases. (Problem 3+)
 
 
 
